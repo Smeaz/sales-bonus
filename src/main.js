@@ -3,7 +3,7 @@ function calculateSimpleRevenue(purchase, _product) {
   const discountDecimal = discount / 100; // переводим скидку в десятичное число
   const fullPrice = sale_price * quantity; // полная стоимость без скидки
   const revenue = fullPrice * (1 - discountDecimal); // выручка с учетом скидки
-  return +revenue.toFixed(2);
+  return revenue;
 }
 
 function calculateBonusByProfit(index, total, seller) {
@@ -15,7 +15,7 @@ function calculateBonusByProfit(index, total, seller) {
   else if (index === total - 1) percent = 0;
   else percent = 0.05;
 
-  return Math.floor(profit * percent * 100) / 100;
+  return profit * percent * 100 / 100;
 }
 
 function analyzeSalesData(data, options) {
@@ -58,11 +58,11 @@ function analyzeSalesData(data, options) {
 
       const revenue = calculateRevenue(item, product);
 
-      const cost = +(product.purchase_price * item.quantity).toFixed(2);
+      const cost = +(product.purchase_price * item.quantity);
 
       const profitItem = revenue - cost;
 
-      seller.revenue += revenue;
+      seller.revenue += +revenue.toFixed(2);
       seller.profit += profitItem;
 
       seller.products_sold[item.sku] =
@@ -71,7 +71,7 @@ function analyzeSalesData(data, options) {
   });
 
   sellerStats.forEach((seller) => {
-    seller.profit = +seller.profit.toFixed(2);
+    seller.profit = seller.profit;
   });
 
   sellerStats.sort((a, b) => b.profit - a.profit);
@@ -89,9 +89,9 @@ function analyzeSalesData(data, options) {
     seller_id: s.id,
     name: s.name,
     revenue: +s.revenue.toFixed(2),
-    profit: s.profit,
+    profit: +s.profit.toFixed(2),
     sales_count: s.sales_count,
     top_products: s.top_products,
-    bonus: s.bonus,
+    bonus: +s.bonus.toFixed(2),
   }));
 }
